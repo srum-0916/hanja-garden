@@ -1,5 +1,5 @@
 /* 글자숲 v0.4 · 계정 UI */
-.cloud-account{grid-column:1/-1;border-color:#bed9c6;background:linear-gradient(120deg,var(--surface),var(--bg))}
+.cloud-account{grid-column:1/-1;border-color:var(--line);background:linear-gradient(115deg,var(--surface),var(--bg))}
 .cloud-account-heading{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
 .cloud-account-heading h3{font-size:19px;letter-spacing:-.04em;margin:5px 0}
 .cloud-account-heading p{margin:0}
