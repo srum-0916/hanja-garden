@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#f6f7f7">
 <meta name="description" content="글자숲은 궁금한 한자와 한자어를 찾고, 모으고, 다시 익히는 나만의 작은 한자 사전입니다.">
 <title>글자숲 | 찾고, 모으고, 외우는 한자</title>
-<link rel="stylesheet" href="./cloud-auth.css?v=04">
+<link rel="stylesheet" href="./cloud-auth.css?v=041">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700;800&family=Noto+Serif+KR:wght@400;500;600;700&display=swap');
 :root{color-scheme:light;--bg:#f6f7f7;--surface:#ffffff;--paper:#f0f2f1;--green:#35765a;--green-hi:#226044;--green-soft:#e9f1ec;--text:#1b2320;--muted:#68746e;--line:#e2e7e4;--shadow:0 12px 36px rgba(19,29,23,.045);--red:#c86272;--serif:'Noto Serif KR',serif;--sans:'DM Sans','Noto Sans KR',sans-serif}
@@ -444,7 +444,7 @@ async function copyText(v){try{await navigator.clipboard.writeText(v);showToast(
 function searchFor(q,kind){$('#searchInput').value=q;pageSize=30;if(kind){searchKind=kind;renderSearchKind()}selectTool('text');renderSearch()}
 function renderSearchKind(){$$('[data-kind]').forEach(x=>{const on=x.dataset.kind===searchKind;x.classList.toggle('active',on);x.setAttribute('aria-selected',on?'true':'false')})}
 function toggleTheme(){const dark=document.documentElement.classList.toggle('dark');try{localStorage.setItem('hanja-theme-v1',dark?'dark':'light')}catch(e){};syncTheme()}
-function syncTheme(){const dark=document.documentElement.classList.contains('dark');$$('.theme-toggle').forEach(b=>b.innerHTML=`<svg class="icon"><use href="${dark?'#i-sun':'#i-moon'}"/></svg>`);$('#settingTheme').textContent=dark?'☼ 라이트 모드 전환':'☾ 다크 모드 전환'}
+function syncTheme(){const dark=document.documentElement.classList.contains('dark');document.querySelector('meta[name="theme-color"]')?.setAttribute('content',dark?'#0d0f10':'#f6f7f7');$$('.theme-toggle').forEach(b=>b.innerHTML=`<svg class="icon"><use href="${dark?'#i-sun':'#i-moon'}"/></svg>`);$('#settingTheme').textContent=dark?'☼ 라이트 모드 전환':'☾ 다크 모드 전환'}
 // 단일 위임 처리: 새로 생성된 카드 및 상세 패널에도 동일하게 동작해요.
 document.addEventListener('click',e=>{
  const close=e.target.closest('[data-close]');if(close){closeDrawer();return}
