@@ -101,7 +101,7 @@
       return;
     }
     // Keep a recoverable guest snapshot before cloud values replace local data.
-    if(!localStorage.getItem(GUEST_KEY) && !localStorage.getItem(ACTIVE_KEY)) {
+    if(!localStorage.getItem(ACTIVE_KEY)) {
       localStorage.setItem(GUEST_KEY,json(store.read()));
     }
     user=nextUser;
@@ -187,6 +187,7 @@
   }
 
   window.addEventListener('hanja:localchange',changed);
+  window.addEventListener('online',()=>{if(user&&cloudReady&&!syncBlocked)flush(false);});
   document.addEventListener('visibilitychange',()=>{
     if(document.visibilityState==='hidden' && user && cloudReady) {
       clearTimeout(syncTimer);
