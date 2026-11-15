@@ -19,6 +19,7 @@
       '<span class="cloud-tag">CLOUD</span></div>',
       '<div id="cloudGuest">',
         '<p class="cloud-note">검색은 로그인 없이 사용해도 돼요. 로그인하면 저장한 한자, 단어, 메모, 학습 기록을 기기 간에 동기화할 수 있어요.</p>',
+        '<p class="cloud-note">현재 회원가입은 테스트 단계예요. 공개 회원가입을 위해서는 별도 이메일 발송 설정이 필요해요.</p>',
         '<form id="cloudLoginForm" class="cloud-form">',
           '<label for="cloudEmail">이메일</label><input id="cloudEmail" type="email" autocomplete="email" required placeholder="example@email.com" maxlength="254">',
           '<label for="cloudPassword">비밀번호</label><input id="cloudPassword" type="password" autocomplete="current-password" minlength="8" required placeholder="8자 이상">',
@@ -83,6 +84,7 @@
     const s=String((error && error.message) || error || '');
     if (/invalid login credentials/i.test(s)) return '이메일 또는 비밀번호를 확인해 주세요.';
     if (/email not confirmed/i.test(s)) return '이메일 인증을 먼저 완료해 주세요.';
+    if (/email address not authorized|email_address_not_authorized/i.test(s)) return '지금은 관리자 팀 이메일로만 인증할 수 있어요. 공개 가입용 메일 설정이 필요해요.';
     if (/rate limit|too many/i.test(s)) return '요청이 많아요. 잠시 후 다시 시도해 주세요.';
     if (/network|fetch|Failed to fetch/i.test(s)) return '네트워크 연결을 확인해 주세요.';
     return '요청을 완료하지 못했어요. 잠시 후 다시 시도해 주세요.';
