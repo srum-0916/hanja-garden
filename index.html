@@ -64,7 +64,7 @@
     <section id="drawView" class="hidden">
       <div class="section-head"><div><div class="eyebrow">FIND BY HANDWRITING</div><h2>한자를 직접 그려보세요</h2><p>획의 모양과 방향을 바탕으로 비슷한 글자를 추천해 드려요.</p></div></div>
       <div class="draw-layout">
-        <div class="paper-card"><div class="panel-heading"><strong>✎ 손글씨 입력</strong><span class="small-meta">한 글자씩 그려주세요</span></div><div class="canvas-frame"><canvas id="inkCanvas" aria-label="한자 손글씨 입력용 캔버스"></canvas><span class="canvas-hint" id="canvasHint">이곳에 한 글자를 그려주세요</span></div><div class="action-row"><button class="soft-btn" id="undoBtn" type="button">↶ 한 획 지우기</button><button class="soft-btn" id="clearBtn" type="button">⟲ 전체 지우기</button><button class="primary-btn" id="recognizeBtn" type="button">비슷한 글자 찾기</button></div><div class="status" id="engineStatus" role="status">손글씨 인식 엔진을 준비하고 있어요.</div></div>
+        <div class="paper-card"><div class="panel-heading"><strong>✎ 손글씨 입력</strong><span class="small-meta" id="strokeCount">0획 입력</span></div><div class="canvas-frame"><canvas id="inkCanvas" aria-label="한자 손글씨 입력용 캔버스"></canvas><span class="canvas-hint" id="canvasHint">이곳에 한 글자를 그려주세요</span></div><div class="action-row"><button class="soft-btn" id="undoBtn" type="button">↶ 한 획 지우기</button><button class="soft-btn" id="clearBtn" type="button">⟲ 전체 지우기</button><button class="primary-btn" id="recognizeBtn" type="button">비슷한 글자 찾기</button></div><div class="status" id="engineStatus" role="status">손글씨 인식 엔진을 준비하고 있어요.</div></div>
         <div class="paper-card"><div class="panel-heading"><strong>추천 한자</strong><span class="small-meta">가장 비슷한 순서</span></div><div class="matches" id="drawMatches"><div class="empty" style="padding:38px 8px"><div class="empty-icon">文</div>한 글자를 그리면<br>여기에 후보가 나타나요.</div></div><div class="side-note"><strong>더 잘 찾는 팁 ✦</strong><br>획을 너무 빠르게 생략하지 말고 한 글자를 크게 그려보세요. 획순과 획수가 비슷할수록 유리해요. 후보를 누르면 한국어 음과 뜻을 확인할 수 있어요.</div></div>
       </div>
     </section>
@@ -98,7 +98,7 @@
     </section>
     <section id="savedView" class="hidden"><div class="section-head"><div><div class="eyebrow">MY COLLECTION</div><h2>내 글자함 ♡</h2><p>관심 있는 글자와 나만의 메모를 여기에 모아둘 수 있어요.</p></div><span class="small-meta">이 브라우저에 저장돼요</span></div><div class="review-tools"><div><strong>오늘의 복습 카드</strong><p class="small-meta">저장한 한자의 음과 뜻을 떠올려보세요.</p></div><button class="soft-btn" id="startReview" type="button">암기 카드 시작</button></div><div class="review-card hidden" id="reviewCard"><div class="small-meta" id="reviewProgress"></div><div class="review-glyph" id="reviewGlyph">字</div><div id="reviewAnswer" class="review-answer hidden"></div><div class="action-row"><button class="soft-btn" id="revealReview" type="button">정답 보기</button><button class="primary-btn" id="nextReview" type="button">다음 글자 →</button></div></div><div class="result-grid" id="savedResults"></div></section>
   </main>
-  <footer class="wrap footer"><div>© 2026 글자숲 · 두 번째 시제품 v0.2<br>음·뜻 데이터는 공개 사전 자료를 참고하며, 표제와 뜻은 사전마다 다를 수 있어요.</div><div>손글씨: <a href="https://github.com/gugray/HanziLookupJS" target="_blank" rel="noopener">HanziLookupJS (GPL-3.0)</a> · 사진 인식: <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js (Apache-2.0)</a> · <a href="https://github.com/NeoMindStd/HanjaDB" target="_blank" rel="noopener">HanjaDB</a><br>추가 사전 및 인식 모델은 첫 실행 때 인터넷이 필요해요.</div></footer>
+  <footer class="wrap footer"><div>© 2026 글자숲 · 손글씨 인식 개선 v0.2.1<br>음·뜻 데이터는 공개 사전 자료를 참고하며, 표제와 뜻은 사전마다 다를 수 있어요.</div><div>손글씨: <a href="https://github.com/gugray/HanziLookupJS" target="_blank" rel="noopener">HanziLookupJS (GPL-3.0)</a> · 사진 인식: <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js (Apache-2.0)</a> · <a href="https://github.com/NeoMindStd/HanjaDB" target="_blank" rel="noopener">HanjaDB</a><br>추가 사전 및 인식 모델은 첫 실행 때 인터넷이 필요해요.</div></footer>
   <div class="overlay hidden" id="detailOverlay"><aside class="drawer" role="dialog" aria-modal="true" aria-label="한자 상세 정보" id="detailDrawer"></aside></div>
   <div class="hint-toast hidden" id="toast" role="status"></div>
   <script>
@@ -238,7 +238,7 @@
     const db=new Map();const seedOrder=[];
     for(const line of RAW_SEED.split('\n')){const [char,reading,meaning,category]=line.split('|'); if(db.has(char))continue;db.set(char,{char,readings:[reading],meanings:[meaning],category,source:'기본 사전'});seedOrder.push(char)}
     const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-    let favs=new Set();let memos={};let currentView='search';let pageSize=35;let currentResults=[];let activeChar=null;let strokes=[];let drawing=false;let activePointerId=null;let engineReady=false;let matcher=null;let recognitionTimer=null;let lastToastTimer=null;let reviewQueue=[];let reviewIndex=0;
+    let favs=new Set();let memos={};let currentView='search';let pageSize=35;let currentResults=[];let activeChar=null;let strokes=[];let drawing=false;let activePointerId=null;let engineReady=false;let matcher=null;let alternateMatcher=null;let recognitionTimer=null;let recognitionRevision=0;let lastToastTimer=null;let reviewQueue=[];let reviewIndex=0;
     try{favs=new Set(JSON.parse(localStorage.getItem('hanja-favs-v1')||'[]')); memos=JSON.parse(localStorage.getItem('hanja-memo-v1')||'{}');if(localStorage.getItem('hanja-theme-v1')==='dark')document.documentElement.classList.add('dark')}catch(e){console.info('로컬 저장소를 사용할 수 없어요.');}
     const saveFavs=()=>{try{localStorage.setItem('hanja-favs-v1',JSON.stringify([...favs]))}catch(e){};$('#favCount').textContent=favs.size};
     const showToast=(msg)=>{let t=$('#toast');t.textContent=msg;t.classList.remove('hidden');clearTimeout(lastToastTimer);lastToastTimer=setTimeout(()=>t.classList.add('hidden'),2100)};
@@ -264,14 +264,101 @@
     function canvasPosition(e){const r=canvas.getBoundingClientRect();return [Math.max(0,Math.min(256,(e.clientX-r.left)*256/r.width)),Math.max(0,Math.min(256,(e.clientY-r.top)*256/r.height))]}
     function drawAll(){ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,canvas.width,canvas.height);ctx.setTransform(2,0,0,2,0,0);ctx.fillStyle='#fcfbf6';ctx.fillRect(0,0,256,256);ctx.strokeStyle='#e7e6e0';ctx.lineWidth=.65;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(128,0);ctx.lineTo(128,256);ctx.moveTo(0,128);ctx.lineTo(256,128);ctx.stroke();ctx.setLineDash([]);ctx.strokeStyle='#274c40';ctx.lineWidth=6.2;ctx.lineCap='round';ctx.lineJoin='round';for(const stroke of strokes){if(!stroke.length)continue;ctx.beginPath();ctx.moveTo(...stroke[0]);if(stroke.length===1){ctx.lineTo(stroke[0][0]+.05,stroke[0][1]+.05)}else for(let i=1;i<stroke.length;i++)ctx.lineTo(...stroke[i]);ctx.stroke()}$('#canvasHint').classList.toggle('hide',strokes.length>0)}
     canvas.width=512;canvas.height=512;drawAll();
-    canvas.addEventListener('pointerdown',e=>{if(drawing||(e.button!==0&&e.pointerType==='mouse'))return;drawing=true;activePointerId=e.pointerId;canvas.setPointerCapture(e.pointerId);strokes.push([canvasPosition(e)]);drawAll();e.preventDefault()});
-    canvas.addEventListener('pointermove',e=>{if(!drawing||!strokes.length||e.pointerId!==activePointerId)return;const stroke=strokes[strokes.length-1],p=canvasPosition(e),prev=stroke[stroke.length-1];if(Math.hypot(p[0]-prev[0],p[1]-prev[1])>1.5){stroke.push(p);drawAll()}e.preventDefault()});
-    function finishStroke(e){if(!drawing||(e&&e.pointerId!==activePointerId))return;drawing=false;activePointerId=null;const s=strokes[strokes.length-1];if(s&&s.length===1)s.push([s[0][0]+.3,s[0][1]+.3]);drawAll();clearTimeout(recognitionTimer);recognitionTimer=setTimeout(recognize,100)};
-    canvas.addEventListener('pointerup',finishStroke);canvas.addEventListener('pointercancel',finishStroke);
-    $('#undoBtn').addEventListener('click',()=>{strokes.pop();drawAll();recognize()});$('#clearBtn').addEventListener('click',()=>{strokes=[];drawAll();$('#drawMatches').innerHTML='<div class="empty" style="padding:38px 8px"><div class="empty-icon">文</div>한 글자를 그리면<br>여기에 후보가 나타나요.</div>'});$('#recognizeBtn').addEventListener('click',recognize);
+    function appendStrokePoint(e,force=false){
+      if(!drawing||e.pointerId!==activePointerId||!strokes.length)return;
+      const current=strokes[strokes.length-1],p=canvasPosition(e),prev=current[current.length-1];
+      if(!prev||Math.hypot(p[0]-prev[0],p[1]-prev[1])>(force?.2:.9))current.push(p);
+    }
+    function updateStrokeCount(){$('#strokeCount').textContent=`${strokes.length}획 입력`}
+    function scheduleRecognition(){clearTimeout(recognitionTimer);recognitionTimer=setTimeout(()=>{if(!drawing)recognize()},850)}
+    canvas.addEventListener('pointerdown',e=>{
+      if(drawing||(e.button!==0&&e.pointerType==='mouse'))return;
+      clearTimeout(recognitionTimer);recognitionRevision++;drawing=true;activePointerId=e.pointerId;
+      canvas.setPointerCapture(e.pointerId);strokes.push([canvasPosition(e)]);updateStrokeCount();drawAll();e.preventDefault();
+    });
+    canvas.addEventListener('pointermove',e=>{
+      if(!drawing||e.pointerId!==activePointerId)return;
+      const events=typeof e.getCoalescedEvents==='function'?e.getCoalescedEvents():null;
+      for(const sample of events?.length?events:[e])appendStrokePoint(sample);
+      drawAll();e.preventDefault();
+    });
+    function finishStroke(e){
+      if(!drawing||e.pointerId!==activePointerId)return;
+      // On a fast swipe, iOS may send only pointerdown/pointerup. Always store the end point.
+      appendStrokePoint(e,true);drawing=false;activePointerId=null;
+      const s=strokes[strokes.length-1];
+      if(s?.length===1)s.push([Math.min(256,s[0][0]+4),Math.min(256,s[0][1]+4)]);
+      drawAll();updateStrokeCount();scheduleRecognition();e.preventDefault();
+    }
+    canvas.addEventListener('pointerup',finishStroke);
+    canvas.addEventListener('pointercancel',e=>{
+      if(!drawing||e.pointerId!==activePointerId)return;
+      strokes.pop();drawing=false;activePointerId=null;recognitionRevision++;updateStrokeCount();drawAll();e.preventDefault();
+    });
+    $('#undoBtn').addEventListener('click',()=>{clearTimeout(recognitionTimer);strokes.pop();recognitionRevision++;updateStrokeCount();drawAll();recognize()});
+    $('#clearBtn').addEventListener('click',()=>{clearTimeout(recognitionTimer);recognitionRevision++;strokes=[];updateStrokeCount();drawAll();$('#drawMatches').innerHTML='<div class="empty" style="padding:38px 8px"><div class="empty-icon">文</div>한 글자를 그리면<br>여기에 후보가 나타나요.</div>'});
+    $('#recognizeBtn').addEventListener('click',()=>{clearTimeout(recognitionTimer);recognize()});
     function engineStatus(text,type=''){const el=$('#engineStatus');el.textContent=text;el.className=`status ${type}`}
-    function loadRecognition(){if(window._engineLoading)return;window._engineLoading=true;engineStatus('손글씨 인식 엔진을 다운로드하고 있어요.');const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/gh/gugray/HanziLookupJS@master/dist/hanzilookup.min.js';s.onload=()=>{if(!window.HanziLookup){engineStatus('인식 엔진을 시작하지 못했어요.','error');return}engineStatus('9,507자 인식 데이터를 불러오는 중이에요.');window.HanziLookup.init('mmah','https://cdn.jsdelivr.net/gh/gugray/HanziLookupJS@master/dist/mmah.json',success=>{if(success){engineReady=true;matcher=new HanziLookup.Matcher('mmah');engineStatus('인식 준비 완료! 한자를 그려보세요.','ready');if(strokes.length)recognize()}else engineStatus('인식 자료를 불러오지 못했어요. 인터넷 연결을 확인해주세요.','error')})};s.onerror=()=>engineStatus('인식 엔진을 불러오지 못했어요. 인터넷 연결을 확인해주세요.','error');document.head.appendChild(s)}
-    function recognize(){if(!strokes.length){$('#drawMatches').innerHTML='<div class="empty" style="padding:38px 8px"><div class="empty-icon">文</div>한 글자를 그려주세요.</div>';return}if(!engineReady){engineStatus('인식 엔진이 준비되면 자동으로 검색해요.');return}try{const analyzed=new HanziLookup.AnalyzedCharacter(strokes);matcher.match(analyzed,12,matches=>{const holder=$('#drawMatches');holder.innerHTML=matches.length?matches.map((m,i)=>{const row=db.get(m.character);return `<button class="match" data-open="${escapeHTML(m.character)}" type="button"><strong>${escapeHTML(m.character)}</strong><span>${row?escapeHTML(getReading(row)):`${i+1}순위`}</span></button>`}).join(''):'<div class="empty">비슷한 글자를 찾지 못했어요.</div>'})}catch(e){console.error(e);engineStatus('인식 중 문제가 생겼어요. 지운 뒤 다시 그려주세요.','error')}}
+    function loadRecognition(){
+      if(window._engineLoading)return;
+      window._engineLoading=true;
+      engineStatus('손글씨 인식 엔진을 다운로드하고 있어요.');
+      const s=document.createElement('script');
+      s.src='https://cdn.jsdelivr.net/gh/gugray/HanziLookupJS@master/dist/hanzilookup.min.js';
+      s.onload=()=>{
+        if(!window.HanziLookup){engineStatus('인식 엔진을 시작하지 못했어요.','error');return}
+        const base='https://cdn.jsdelivr.net/gh/gugray/HanziLookupJS@master/dist/';
+        engineStatus('손글씨 인식 데이터를 불러오는 중이에요.');
+        window.HanziLookup.init('mmah',base+'mmah.json',success=>{
+          if(!success){engineStatus('인식 자료를 불러오지 못했어요. 인터넷 연결을 확인해주세요.','error');return}
+          engineReady=true;matcher=new HanziLookup.Matcher('mmah');
+          engineStatus('인식 준비 완료 · 다양한 후보를 비교하고 있어요.','ready');
+          if(strokes.length&&!drawing)scheduleRecognition();
+          // The original dataset contains alternate stroke patterns and characters absent in MMAH.
+          window.HanziLookup.init('orig',base+'orig.json',otherReady=>{
+            if(otherReady){alternateMatcher=new HanziLookup.Matcher('orig');engineStatus('확장 인식 준비 완료 · 두 사전을 함께 비교해요.','ready');if(strokes.length&&!drawing)scheduleRecognition()}
+            else engineStatus('기본 인식은 정상 작동해요. 확장 자료는 불러오지 못했어요.','ready');
+          });
+        });
+      };
+      s.onerror=()=>engineStatus('인식 엔진을 불러오지 못했어요. 인터넷 연결을 확인해주세요.','error');
+      document.head.appendChild(s);
+    }
+    function combineMatches(primary,secondary){
+      const candidates=new Map();
+      for(const [list,weight] of [[primary,1],[secondary,.95]]){
+        list.forEach((m,i)=>{
+          let candidate=candidates.get(m.character);
+          if(!candidate){candidate={character:m.character,rankScore:0,bestRank:i};candidates.set(m.character,candidate)}
+          candidate.rankScore+=weight/(8+i);candidate.bestRank=Math.min(candidate.bestRank,i);
+        });
+      }
+      return [...candidates.values()].sort((a,b)=>b.rankScore-a.rankScore||a.bestRank-b.bestRank).slice(0,24);
+    }
+    function showDrawMatches(matches){
+      const holder=$('#drawMatches');
+      holder.innerHTML=matches.length?matches.map((m,i)=>{
+        const row=db.get(m.character);
+        return `<button class="match" data-open="${escapeHTML(m.character)}" type="button" aria-label="${escapeHTML(m.character)} 후보 ${i+1}"><strong>${escapeHTML(m.character)}</strong><span>${row?escapeHTML(getReading(row)):`${i+1}순위`}</span></button>`;
+      }).join(''):'<div class="empty">비슷한 글자를 찾지 못했어요. 획을 다시 그려보세요.</div>';
+    }
+    function recognize(){
+      if(drawing)return;
+      if(!strokes.length){$('#drawMatches').innerHTML='<div class="empty" style="padding:38px 8px"><div class="empty-icon">文</div>한 글자를 그려주세요.</div>';return}
+      if(!engineReady){engineStatus('인식 엔진이 준비되면 자동으로 검색해요.');return}
+      const revision=recognitionRevision;
+      try{
+        const analyzed=new HanziLookup.AnalyzedCharacter(strokes.map(s=>s.map(p=>[...p])));
+        matcher.match(analyzed,24,primary=>{
+          if(revision!==recognitionRevision)return;
+          if(alternateMatcher){
+            alternateMatcher.match(analyzed,24,secondary=>{
+              if(revision===recognitionRevision)showDrawMatches(combineMatches(primary,secondary));
+            });
+          }else showDrawMatches(primary);
+        });
+      }catch(e){console.error(e);engineStatus('인식 중 문제가 생겼어요. 다시 그려주세요.','error')}
+    }
 
     // OCR is performed on-device in the browser (Tesseract WASM). No user photo is uploaded by this site.
     let photoObjectUrl=null, photoSelection=null, photoSelecting=false, photoPointerId=null, photoStart=null;
