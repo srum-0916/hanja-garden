@@ -1,0 +1,20 @@
+/* 글자숲 v0.4 · 계정 UI */
+.cloud-account{grid-column:1/-1;border-color:#bed9c6;background:linear-gradient(120deg,var(--surface),var(--bg))}
+.cloud-account-heading{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.cloud-account-heading h3{font-size:19px;letter-spacing:-.04em;margin:5px 0}
+.cloud-account-heading p{margin:0}
+.cloud-tag{font-size:10px;font-weight:800;color:var(--green-hi);background:var(--green-soft);border-radius:99px;padding:6px 10px}
+.cloud-note{font-size:12px;line-height:1.8;color:var(--muted);margin:10px 0 16px}
+.cloud-form{display:grid;gap:8px;max-width:460px;margin-top:13px}
+.cloud-form label{font-size:12px;font-weight:800;margin-top:7px}
+.cloud-form input{font-size:16px;min-height:47px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--text);padding:11px 13px;width:100%}
+.cloud-form button{margin-top:9px;min-height:47px}
+.cloud-switch{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:9px}
+.cloud-switch .btn{font-size:12px;min-height:38px}
+.cloud-message{font-size:12px;color:var(--green-hi);margin:13px 0 0;min-height:18px;line-height:1.6}
+.cloud-user{display:flex;gap:12px;align-items:center;padding:15px;background:var(--paper);border-radius:14px;margin:16px 0 13px;overflow-wrap:anywhere}
+.cloud-user strong{font-size:13px}.cloud-user p{margin:3px 0 0}
+.cloud-avatar{width:47px;height:47px;display:grid;place-items:center;background:var(--surface);border-radius:13px;font:700 24px 'Noto Serif KR',serif;color:var(--green-hi);flex:none}
+#cloudMerge{display:block;margin-top:12px;text-align:left;padding-left:0}
+#cloudMerge.hidden{display:none}
+@media(max-width:520px){.cloud-account{padding:18px}.cloud-account-heading h3{font-size:17px}.cloud-tag{font-size:9px}.cloud-switch{gap:5px}}
